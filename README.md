@@ -382,15 +382,6 @@ Contributions are welcome! Please:
 - [Kubernetes Documentation](https://kubernetes.io/docs/)
 - [Terraform Best Practices](https://www.terraform.io/cloud-docs/best-practices)
 
-## License
-
-This project is licensed under the MIT License. See LICENSE file for details.
-
 ## Support
 
 For issues, questions, or suggestions, please open a GitHub Issue in this repository.
-
----
-
-**Last Updated**: 2026-05-28  
-**Repository**: [sudhakarnallasre/eks-terraform](https://github.com/sudhakarnallasre/eks-terraform)
