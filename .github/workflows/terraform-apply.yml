@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '.github/workflows/terraform-destroy.yml'  # Don't trigger on destroy workflow changes
 
 permissions:
   id-token: write

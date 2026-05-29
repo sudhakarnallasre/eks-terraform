@@ -1,11 +1,7 @@
-name: Terraform Plan
+name: Terraform Destroy
 
 on:
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - '.github/workflows/terraform-destroy.yml'  # Don't trigger on destroy workflow changes  
+  workflow_dispatch:  # Manual trigger only
 
 permissions:
   id-token: write
@@ -32,8 +28,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Validate
-        run: terraform validate
+      - name: Terraform Destroy Plan
+        run: terraform plan -destroy -out=destroy_plan.tfplan
 
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
+      - name: Review Destroy Plan
+        run: |
+          echo "=== Resources to be destroyed ==="
+          terraform show destroy_plan.tfplan
+
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
