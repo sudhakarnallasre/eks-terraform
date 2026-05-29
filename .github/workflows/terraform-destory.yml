@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  terraform:
+  terraform-plan:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,6 +35,43 @@ jobs:
         run: |
           echo "=== Resources to be destroyed ==="
           terraform show destroy_plan.tfplan
+
+      - name: Upload Destroy Plan
+        uses: actions/upload-artifact@v4
+        with:
+          name: destroy_plan
+          path: destroy_plan.tfplan
+          retention-days: 1
+
+  terraform-destroy:
+    needs: terraform-plan
+    runs-on: ubuntu-latest
+    environment: destroy-approval  # Change this to any name you prefer
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Download Destroy Plan
+        uses: actions/download-artifact@v4
+        with:
+          name: destroy_plan
 
       - name: Terraform Destroy
         run: terraform destroy -auto-approve
